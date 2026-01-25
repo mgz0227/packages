@@ -44,6 +44,9 @@ for option in ${old_options}; do
 						uci -q add_list ${config}.global.adb_utc_feed="${value}"
 					fi
 				;;
+				"adb_forcedns")
+					uci -q set ${config}.global.adb_dnsforce="${value}"
+				;;
 				"adb_fetchutil")
 					uci -q set ${config}.global.adb_fetchcmd="${value}"
 				;;
@@ -60,19 +63,6 @@ for option in ${old_options}; do
 						uci -q add_list ${config}.global.adb_hag_feed="wildcard/${value}"
 					fi
 				;;
-				"adb_forcedns" | "adb_dnsforce")
-					uci -q set ${config}.global.adb_nftforce="${value}"
-				;;
-				"adb_zonelist")
-					if ! uci -q get ${config}.global.adb_nftdevforce | grep -q "${value}"; then
-						uci -q add_list ${config}.global.adb_nftdevforce="${value}"
-					fi
-				;;
-				"adb_portlist")
-					if ! uci -q get ${config}.global.adb_nftportforce | grep -q "${value}"; then
-						uci -q add_list ${config}.global.adb_nftportforce="${value}"
-					fi
-				;;
 				"adb_replisten")
 					if ! uci -q get ${config}.global.adb_repport | grep -q "${value}"; then
 						uci -q add_list ${config}.global.adb_repport="${value}"
@@ -85,14 +75,4 @@ for option in ${old_options}; do
 done
 [ -n "$(uci -q changes ${config})" ] && uci -q commit ${config}
 
-# remove former adblock-related firewall zones
-#
-fwcfg="$(uci -qNX show "firewall" | awk 'BEGIN{FS="[.=]"};/adblock_/{if(zone==$2){next}else{ORS=" ";zone=$2;print zone}}')"
-for section in ${fwcfg}; do
-	uci -q delete firewall."${section}"
-done
-if [ -n "$(uci -q changes firewall)" ]; then
-	uci -q commit firewall
-	/etc/init.d/firewall reload
-fi
 exit 0

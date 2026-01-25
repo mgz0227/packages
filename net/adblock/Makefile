@@ -17,7 +17,7 @@ define Package/adblock
 	SECTION:=net
 	CATEGORY:=Network
 	TITLE:=adblock blocks ad/abuse domains by using DNS
-	DEPENDS:=+jshn +jsonfilter +firewall4 +coreutils +coreutils-sort +gawk +ca-bundle +rpcd +rpcd-mod-rpcsys
+	DEPENDS:=+jshn +jsonfilter +coreutils +coreutils-sort +gawk +ca-bundle +rpcd +rpcd-mod-rpcsys
 	PKGARCH:=all
 endef
 
